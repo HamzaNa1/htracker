@@ -1,3 +1,15 @@
+"use client";
+
+import { useState } from "react";
+import SignIn from "./components/SignIn";
+import { Main } from "next/document";
+
 export default function Home() {
-	return <main></main>;
+	let [token, setToken] = useState("");
+
+	return (
+		<main className="bg-slate-800 w-screen h-screen">
+			{token == "" ? <SignIn /> : <Main />}
+		</main>
+	);
 }
