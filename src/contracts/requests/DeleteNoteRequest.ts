@@ -1,0 +1,3 @@
+type DeleteNoteRequest = {
+	noteId: string;
+};

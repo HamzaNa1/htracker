@@ -1,0 +1,3 @@
+type GetNotesResponse = {
+	Notes: Note[];
+};

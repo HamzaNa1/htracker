@@ -4,6 +4,7 @@ export async function POST(request: Request) {
 	const validateRequest: ValidateRequest = await request.json();
 
 	const valid = VerifyToken(validateRequest.token);
+	console.log(validateRequest.token);
 
 	const response: ValidateResponse = {
 		valid: valid,

@@ -1,15 +1,15 @@
 import { MainContext } from "@/utility/Context";
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import GameSlider from "./GameSlider";
+import GameSlider from "./NoteSlider";
 import { GetDayAsString } from "@/utility/MiscUtility";
 
 export default function Menu() {
-	const { token, setToken, setGameId, setBlack } = useContext(MainContext);
+	const { token, setToken, setNote, setBlack } = useContext(MainContext);
 
 	const createButtonRef = useRef<HTMLButtonElement>(null);
 	const [searchDate, setSearchDate] = useState<string>(GetDayAsString());
-	const [games, setGames] = useState<NotesGame[] | null>(null);
+	const [games, setGames] = useState<Note[] | null>(null);
 
 	async function CreateNote() {
 		if (createButtonRef.current == null) {
@@ -18,7 +18,7 @@ export default function Menu() {
 
 		createButtonRef.current.disabled = true;
 
-		let response = await fetch("/api/games/create", {
+		let response = await fetch("/api/notes/create", {
 			headers: {
 				Accept: "application/json",
 				Authorization: "Bearer " + token,
@@ -35,7 +35,7 @@ export default function Menu() {
 		}
 
 		const createResponse: CreateResponse = await response.json();
-		setGameId(createResponse.id);
+		setNote(createResponse.Game);
 
 		createButtonRef.current.disabled = false;
 
@@ -43,13 +43,12 @@ export default function Menu() {
 	}
 
 	async function LoadGames() {
-		const getRequest: GetGamesRequest = {
+		const getRequest: GetNotesRequest = {
 			date: searchDate,
 		};
 
-		const response = await fetch("/api/games/", {
+		const response = await fetch("/api/notes/", {
 			method: "POST",
-
 			headers: {
 				Accept: "application/json",
 				Authorization: "Bearer " + token,
@@ -67,8 +66,8 @@ export default function Menu() {
 			return;
 		}
 
-		const getResponse: GetGamesResponse = await response.json();
-		const games = getResponse.Games;
+		const getResponse: GetNotesResponse = await response.json();
+		const games = getResponse.Notes;
 
 		setGames(games);
 	}

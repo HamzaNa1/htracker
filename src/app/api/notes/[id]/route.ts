@@ -11,7 +11,7 @@ export async function GET(
 	}
 
 	const db = await GetMongo();
-	const collection = db.collection("games");
+	const collection = db.collection("notes");
 
 	const doc = await collection.findOne({
 		_id: params.id as unknown as ObjectId,
@@ -21,8 +21,8 @@ export async function GET(
 		return new Response(undefined, { status: 404 });
 	}
 
-	const response: GetGameResponse = {
-		Game: { _id: params.id, Game: doc.game, Notes: doc.notes },
+	const response: GetNoteResponse = {
+		Note: { _id: params.id, Game: doc.game, Text: doc.notes },
 	};
 
 	return Response.json(response);

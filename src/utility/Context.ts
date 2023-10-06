@@ -3,8 +3,8 @@ import { Dispatch, SetStateAction, createContext } from "react";
 type MyContext = {
 	token: string;
 	setToken: Dispatch<SetStateAction<string>>;
-	gameId: string;
-	setGameId: Dispatch<SetStateAction<string>>;
+	note: Note | null;
+	setNote: Dispatch<SetStateAction<Note | null>>;
 	black: boolean;
 	setBlack: Dispatch<SetStateAction<boolean>>;
 };
@@ -12,8 +12,8 @@ type MyContext = {
 const value: MyContext = {
 	token: "",
 	setToken: undefined!,
-	gameId: "",
-	setGameId: undefined!,
+	note: undefined!,
+	setNote: undefined!,
 	black: false,
 	setBlack: undefined!,
 };

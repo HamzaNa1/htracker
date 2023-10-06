@@ -1,0 +1,3 @@
+type GetNotesRequest = {
+	date: string;
+};

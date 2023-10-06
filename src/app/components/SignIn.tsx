@@ -6,7 +6,7 @@ import { useCookies } from "react-cookie";
 import { toast } from "sonner";
 
 export default function SignIn() {
-	const [cookies, setCookie] = useCookies(["token"]);
+	const [, setCookie] = useCookies(["token"]);
 
 	const { setToken, setBlack } = useContext(MainContext);
 

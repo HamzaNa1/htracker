@@ -1,13 +1,11 @@
 import { MainContext } from "@/utility/Context";
 import { rankNames, agentNames, mapNames } from "@/utility/GameUtility";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function Game() {
-	const { token, gameId, setToken, setGameId, setBlack } =
-		useContext(MainContext);
+	const { token, note, setToken, setNote, setBlack } = useContext(MainContext);
 
-	const [game, setGame] = useState<NotesGame | null>(null);
 	const [kdr, setKDR] = useState(0);
 
 	const dateRef = useRef<HTMLInputElement>(null);
@@ -23,44 +21,16 @@ export default function Game() {
 	const RankRef = useRef<HTMLInputElement>(null);
 	const notesRef = useRef<HTMLTextAreaElement>(null);
 
-	async function LoadGame() {
-		const response = await fetch("/api/games/" + gameId, {
-			headers: {
-				Accept: "application/json",
-				Authorization: "Bearer " + token,
-			},
-		});
-
-		if (response.status == 401) {
-			setToken("");
-			toast.error("Invalid token!");
-			return;
-		} else if (response.status == 404) {
-			setGameId("");
-			toast.error("Game not found!");
-			return;
-		} else if (response.status != 200) {
-			toast.error("Unexpected error!");
-			return;
-		}
-
-		const getResponse: GetGameResponse = await response.json();
-		const game = getResponse.Game;
-
-		setGame(game);
-		setKDR(game.Game.Deaths == 0 ? 0 : game.Game.Kills / game.Game.Deaths);
-	}
-
 	async function DeleteGame() {
-		if (game == null) {
+		if (note == null) {
 			return;
 		}
 
-		const deleteRequest: DeleteGameRequest = {
-			gameId: game._id,
+		const deleteRequest: DeleteNoteRequest = {
+			noteId: note._id,
 		};
 
-		const response = await fetch("/api/games/delete", {
+		const response = await fetch("/api/notes/delete", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -82,13 +52,12 @@ export default function Game() {
 			toast.success("Deleted note!");
 		}
 
-		setGame(null);
-		setGameId("");
+		setNote(null);
 	}
 
 	async function UpdateGame() {
 		if (
-			game == null ||
+			note == null ||
 			!notesRef.current ||
 			!dateRef.current ||
 			!agentRef.current ||
@@ -105,30 +74,30 @@ export default function Game() {
 			return;
 		}
 
-		game.Notes = notesRef.current.value;
+		note.Text = notesRef.current.value;
 
-		game.Game.Date = dateRef.current.value;
+		note.Game.Date = dateRef.current.value;
 
 		if (!agentRef.current.checkValidity()) {
 			toast.error("Invalid Agent!");
 			return;
 		}
 
-		game.Game.Agent = agentRef.current.value;
+		note.Game.Agent = agentRef.current.value;
 
 		if (!mapRef.current.checkValidity()) {
 			toast.error("Invalid Map!");
 			return;
 		}
 
-		game.Game.Map = mapRef.current.value;
+		note.Game.Map = mapRef.current.value;
 
 		if (!resultRef.current.checkValidity()) {
 			toast.error("Invalid Result!");
 			return;
 		}
 
-		game.Game.Result = resultRef.current.value as GameResult;
+		note.Game.Result = resultRef.current.value as GameResult;
 
 		if (!roundsRef.current.checkValidity()) {
 			toast.error("Invalid Rounds!");
@@ -138,8 +107,8 @@ export default function Game() {
 		const roundsInput = roundsRef.current.value;
 		const splitRounds = roundsInput.split("-").map((x) => Number(x));
 
-		game.Game.RoundsWon = splitRounds[0];
-		game.Game.RoundsLost = splitRounds[0];
+		note.Game.RoundsWon = splitRounds[0];
+		note.Game.RoundsLost = splitRounds[0];
 
 		if (!KDARef.current.checkValidity()) {
 			toast.error("Invalid KDA!");
@@ -149,50 +118,50 @@ export default function Game() {
 		const KDAInput = KDARef.current.value;
 		const splitKDA = KDAInput.split("/").map((x) => Number(x));
 
-		game.Game.Kills = splitKDA[0];
-		game.Game.Deaths = splitKDA[1];
-		game.Game.Assists = splitKDA[2];
+		note.Game.Kills = splitKDA[0];
+		note.Game.Deaths = splitKDA[1];
+		note.Game.Assists = splitKDA[2];
 
 		if (!DDRef.current.checkValidity()) {
 			toast.error("Invalid DD!");
 			return;
 		}
 
-		game.Game.DD = Number(DDRef.current.value);
+		note.Game.DD = Number(DDRef.current.value);
 
 		if (!HSRef.current.checkValidity()) {
 			toast.error("Invalid HS!");
 			return;
 		}
 
-		game.Game.Headshot = Number(HSRef.current.value);
+		note.Game.Headshot = Number(HSRef.current.value);
 
 		if (!ADRRef.current.checkValidity()) {
 			toast.error("Invalid ADR!");
 			return;
 		}
 
-		game.Game.ADR = Number(ADRRef.current.value);
+		note.Game.ADR = Number(ADRRef.current.value);
 
 		if (!RRRef.current.checkValidity()) {
 			toast.error("Invalid RR!");
 			return;
 		}
 
-		game.Game.RR = Number(RRRef.current.value);
+		note.Game.RR = Number(RRRef.current.value);
 
 		if (!RankRef.current.checkValidity) {
 			toast.error("Invalid Rank!");
 			return;
 		}
 
-		game.Game.Rank = RankRef.current.value;
+		note.Game.Rank = RankRef.current.value;
 
-		const updateRequest: UpdateGameRequest = {
-			Game: game,
+		const updateRequest: UpdateNoteRequest = {
+			Note: note,
 		};
 
-		const response = await fetch("/api/games/update", {
+		const response = await fetch("/api/notes/update", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -214,15 +183,15 @@ export default function Game() {
 			return;
 		}
 
-		setGame(game);
+		setNote(note);
 		toast.success("Updated note!");
 	}
 
-	useEffect(() => {
-		LoadGame();
-	}, []);
+	// useEffect(() => {
+	// 	LoadGame();
+	// }, []);
 
-	if (game) {
+	if (note) {
 		const agentPattern = "^(" + agentNames.join("|") + ")$";
 		const mapPattern = "^(" + mapNames.join("|") + ")$";
 		const rankPattern = "^(" + rankNames.join("|") + ")$";
@@ -239,7 +208,7 @@ export default function Game() {
 										type="date"
 										className="bg-slate-600 outline-none rounded-md px-1 w-30 text-center"
 										ref={dateRef}
-										defaultValue={game.Game.Date}
+										defaultValue={note.Game.Date}
 									/>
 								</span>
 							</div>
@@ -250,7 +219,7 @@ export default function Game() {
 										pattern={agentPattern}
 										className="bg-slate-600 outline-none rounded-md px-1 w-20 text-center invalid:border-red-600 invalid:border-2"
 										ref={agentRef}
-										defaultValue={game.Game.Agent}
+										defaultValue={note.Game.Agent}
 									/>
 								</span>
 							</div>
@@ -261,7 +230,7 @@ export default function Game() {
 										pattern={mapPattern}
 										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
 										ref={mapRef}
-										defaultValue={game.Game.Map}
+										defaultValue={note.Game.Map}
 									/>
 								</span>
 							</div>
@@ -272,7 +241,7 @@ export default function Game() {
 										pattern="^(D|W|L)$"
 										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
 										ref={resultRef}
-										defaultValue={game.Game.Result}
+										defaultValue={note.Game.Result}
 									/>
 								</span>
 							</div>
@@ -284,13 +253,13 @@ export default function Game() {
 										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
 										ref={roundsRef}
 										defaultValue={
-											(game.Game.RoundsWon < 10
-												? "0" + game.Game.RoundsWon
-												: game.Game.RoundsWon) +
+											(note.Game.RoundsWon < 10
+												? "0" + note.Game.RoundsWon
+												: note.Game.RoundsWon) +
 											"-" +
-											(game.Game.RoundsLost < 10
-												? "0" + game.Game.RoundsLost
-												: game.Game.RoundsLost)
+											(note.Game.RoundsLost < 10
+												? "0" + note.Game.RoundsLost
+												: note.Game.RoundsLost)
 										}
 									/>
 								</span>
@@ -303,11 +272,11 @@ export default function Game() {
 										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
 										ref={KDARef}
 										defaultValue={
-											game.Game.Kills +
+											note.Game.Kills +
 											"/" +
-											game.Game.Deaths +
+											note.Game.Deaths +
 											"/" +
-											game.Game.Assists
+											note.Game.Assists
 										}
 										onChange={(e) => {
 											if (!e.target.checkValidity()) {
@@ -344,7 +313,7 @@ export default function Game() {
 										pattern="^(-)*[0-9]+$"
 										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
 										ref={DDRef}
-										defaultValue={game.Game.DD}
+										defaultValue={note.Game.DD}
 									/>
 								</span>
 							</div>
@@ -355,7 +324,7 @@ export default function Game() {
 										pattern="^[0-9]+$"
 										className="bg-slate-600 outline-none rounded-md px-1 w-8 text-center invalid:border-red-600 invalid:border-2"
 										ref={HSRef}
-										defaultValue={game.Game.Headshot}
+										defaultValue={note.Game.Headshot}
 									/>
 								</span>
 							</div>
@@ -366,7 +335,7 @@ export default function Game() {
 										pattern="^[0-9]+$"
 										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
 										ref={ADRRef}
-										defaultValue={game.Game.ADR}
+										defaultValue={note.Game.ADR}
 									/>
 								</span>
 							</div>
@@ -377,7 +346,7 @@ export default function Game() {
 										pattern="^(-)*[0-9]+$"
 										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
 										ref={RRRef}
-										defaultValue={game.Game.RR}
+										defaultValue={note.Game.RR}
 									/>
 								</span>
 							</div>
@@ -388,7 +357,7 @@ export default function Game() {
 										pattern={rankPattern}
 										className="bg-slate-600 outline-none rounded-md px-1 w-24 text-center invalid:border-red-600 invalid:border-2"
 										ref={RankRef}
-										defaultValue={game.Game.Rank}
+										defaultValue={note.Game.Rank}
 									/>
 								</span>
 							</div>
@@ -396,7 +365,7 @@ export default function Game() {
 					</div>
 					<div className="w-full h-3 bg-slate-500"></div>
 					<textarea
-						defaultValue={game.Notes}
+						defaultValue={note.Text}
 						spellCheck="false"
 						ref={notesRef}
 						className="w-full h-full outline-none bg-transparent p-1 resize-none"
@@ -415,7 +384,7 @@ export default function Game() {
 						</button>
 						<button
 							className="w-full bg-slate-600 hover:bg-slate-700 active:m-1"
-							onClick={() => setGameId("")}
+							onClick={() => setNote(null)}
 						>
 							Back
 						</button>

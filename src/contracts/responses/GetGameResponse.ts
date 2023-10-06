@@ -1,3 +1,0 @@
-type GetGameResponse = {
-	Game: NotesGame;
-};

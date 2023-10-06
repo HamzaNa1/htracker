@@ -7,28 +7,28 @@ export async function POST(request: Request) {
 		return new Response(undefined, { status: 401 });
 	}
 
-	const getRequest: GetGamesRequest = await request.json();
+	const getRequest: GetNotesRequest = await request.json();
 
 	const db = await GetMongo();
-	const collection = db.collection("games");
+	const collection = db.collection("notes");
 
 	const cursor = collection
-		.find({ "game.Date": getRequest.date })
-		.sort({ "game.AddedTimestamp": -1 });
+		.find({ "Game.Date": getRequest.date })
+		.sort({ "Game.AddedTimestamp": -1 });
 	const arr = await cursor.toArray();
 	const games = arr.map((x) => getNote(x));
 
-	const response: GetGamesResponse = {
-		Games: games,
+	const response: GetNotesResponse = {
+		Notes: games,
 	};
 
 	return Response.json(response);
 }
 
-function getNote(doc: WithId<Document>): NotesGame {
+function getNote(doc: WithId<Document>): Note {
 	return {
 		_id: doc._id as unknown as string,
-		Game: doc.game,
-		Notes: doc.notes,
+		Game: doc.Game,
+		Text: doc.Text,
 	};
 }

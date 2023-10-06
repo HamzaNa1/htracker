@@ -7,21 +7,16 @@ export async function POST(request: Request) {
 		return new Response(undefined, { status: 401 });
 	}
 
-	const updateRequest: UpdateGameRequest = await request.json();
+	const deleteRequest: DeleteNoteRequest = await request.json();
 
 	const db = await GetMongo();
-	const collection = db.collection("games");
+	const collection = db.collection("notes");
 
-	const result = await collection.updateOne(
-		{
-			_id: updateRequest.Game._id as unknown as ObjectId,
-		},
-		{
-			$set: { game: updateRequest.Game.Game, notes: updateRequest.Game.Notes },
-		}
-	);
+	const result = await collection.deleteOne({
+		_id: deleteRequest.noteId as unknown as ObjectId,
+	});
 
-	if (result.matchedCount == 0) {
+	if (result.deletedCount == 0) {
 		return new Response(undefined, { status: 404 });
 	}
 

@@ -4,8 +4,8 @@ import { useContext } from "react";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
 
-export default function GameBanner({ games }: { games: NotesGame[] }) {
-	const { setGameId } = useContext(MainContext);
+export default function NoteSlider({ games }: { games: Note[] }) {
+	const { setNote } = useContext(MainContext);
 	const [sliderRef, instanceRef] = useKeenSlider(
 		{
 			vertical: true,
@@ -23,7 +23,7 @@ export default function GameBanner({ games }: { games: NotesGame[] }) {
 				<button
 					key={i}
 					className="keen-slider__slide w-full flex px-2 flex-row gap-2 h-24 bg-slate-500 rounded-md text-gray-200 hover:bg-slate-600 active:bg-slate-700 disabled:bg-slate-700 border-2 border-slate-900"
-					onClick={() => setGameId(x._id)}
+					onClick={() => setNote(x)}
 				>
 					<div className="h-full flex items-center">
 						<span>

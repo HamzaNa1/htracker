@@ -8,22 +8,22 @@ export async function GET(request: Request) {
 		return new Response(undefined, { status: 401 });
 	}
 
-	const id = await createGame();
+	const note = await createNote();
 
-	if (!id) {
+	if (!note) {
 		return new Response(undefined, { status: 500 });
 	}
 
 	const response: CreateResponse = {
-		id: id,
+		Game: note,
 	};
 
 	return Response.json(response);
 }
 
-async function createGame(): Promise<string | null> {
+async function createNote(): Promise<Note | null> {
 	const db = await GetMongo();
-	const collection = db.collection("games");
+	const collection = db.collection("notes");
 
 	const game: Game = {
 		Date: GetDayAsString(),
@@ -46,13 +46,19 @@ async function createGame(): Promise<string | null> {
 	for (let i = 0; i < 10; i++) {
 		try {
 			const id = generateId();
+			const notesGame: Note = {
+				_id: id,
+				Game: game,
+				Text: "",
+			};
+
 			await collection.insertOne({
 				_id: id as unknown as ObjectId,
-				game: game,
-				notes: "",
+				Game: game,
+				Notes: "",
 			});
 
-			return id;
+			return notesGame;
 		} catch {}
 	}
 

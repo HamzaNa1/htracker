@@ -1,0 +1,3 @@
+type UpdateNoteRequest = {
+	Note: Note;
+};

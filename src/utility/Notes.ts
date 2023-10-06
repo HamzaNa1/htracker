@@ -1,7 +1,7 @@
-type NotesGame = {
+type Note = {
 	_id: string;
 	Game: Game;
-	Notes: string;
+	Text: string;
 };
 
 type Game = {

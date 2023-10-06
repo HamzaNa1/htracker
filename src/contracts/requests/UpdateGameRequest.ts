@@ -1,3 +1,0 @@
-type UpdateGameRequest = {
-	Game: NotesGame;
-};

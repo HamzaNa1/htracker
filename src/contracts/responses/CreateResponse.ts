@@ -1,3 +1,3 @@
 type CreateResponse = {
-	id: string;
+	Game: Note;
 };

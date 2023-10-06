@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import SignIn from "./components/SignIn";
 import { Toaster, toast } from "sonner";
 import Menu from "./components/Menu";
-import Game from "./components/Game";
+import Game from "./components/Note";
 import { useCookies } from "react-cookie";
 import { MainContext } from "@/utility/Context";
 
@@ -12,7 +12,7 @@ export default function Home() {
 	const [cookies] = useCookies(["token"]);
 	const [isLoading, setLoading] = useState(true);
 	const [token, setToken] = useState("");
-	const [gameId, setGameId] = useState("");
+	const [note, setNote] = useState<Note | null>(null);
 	const [black, setBlack] = useState(false);
 
 	async function ValidateToken(token: string) {
@@ -54,7 +54,14 @@ export default function Home() {
 
 	return (
 		<MainContext.Provider
-			value={{ token, setToken, gameId, setGameId, black, setBlack }}
+			value={{
+				token,
+				setToken,
+				note,
+				setNote,
+				black,
+				setBlack,
+			}}
 		>
 			<>
 				{black ? (
@@ -73,7 +80,7 @@ export default function Home() {
 							</div>
 						) : token == "" ? (
 							<SignIn />
-						) : gameId == "" ? (
+						) : note == null ? (
 							<Menu />
 						) : (
 							<Game />
