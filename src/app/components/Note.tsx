@@ -49,7 +49,7 @@ export default function Game() {
 		} else if (response.status != 200) {
 			toast.error("Unexpected error!");
 		} else {
-			toast.success("Deleted note!");
+			toast.success("Note Deleted!");
 		}
 
 		setNote(null);
@@ -184,7 +184,7 @@ export default function Game() {
 		}
 
 		setNote(note);
-		toast.success("Updated note!");
+		toast.success("Note Updated!");
 	}
 
 	// useEffect(() => {

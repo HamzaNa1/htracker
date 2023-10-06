@@ -39,7 +39,7 @@ export default function Menu() {
 
 		createButtonRef.current.disabled = false;
 
-		toast.success("Created Note!");
+		toast.success("Note Created!");
 	}
 
 	async function LoadGames() {
