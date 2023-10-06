@@ -6,6 +6,7 @@ type NotesGame = {
 
 type Game = {
 	Date: string;
+	AddedTimestamp: number;
 	Agent: string;
 	Map: string;
 	Result: GameResult;

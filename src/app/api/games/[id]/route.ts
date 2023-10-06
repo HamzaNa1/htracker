@@ -1,12 +1,12 @@
 import GetMongo from "@/utility/Mongo";
-import VerifyToken from "@/utility/TokenUtility";
+import { VerifyRequest } from "@/utility/TokenUtility";
 import { ObjectId } from "mongodb";
 
 export async function GET(
 	request: Request,
 	{ params }: { params: { id: string } }
 ) {
-	if (!VerifyToken(request)) {
+	if (!VerifyRequest(request)) {
 		return new Response(undefined, { status: 401 });
 	}
 

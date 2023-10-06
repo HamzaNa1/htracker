@@ -1,9 +1,9 @@
 import GetMongo from "@/utility/Mongo";
-import VerifyToken from "@/utility/TokenUtility";
+import { VerifyRequest } from "@/utility/TokenUtility";
 import { ObjectId } from "mongodb";
 
 export async function POST(request: Request) {
-	if (!VerifyToken(request)) {
+	if (!VerifyRequest(request)) {
 		return new Response(undefined, { status: 401 });
 	}
 

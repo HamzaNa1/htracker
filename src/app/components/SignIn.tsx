@@ -8,14 +8,14 @@ import { toast } from "sonner";
 export default function SignIn() {
 	const [cookies, setCookie] = useCookies(["token"]);
 
-	const { setToken } = useContext(MainContext);
+	const { setToken, setBlack } = useContext(MainContext);
 
 	const usernameElement = useRef<HTMLInputElement>(null);
 	const passwordElement = useRef<HTMLInputElement>(null);
 
 	async function Login() {
-		let username = usernameElement.current?.value;
-		let password = passwordElement.current?.value;
+		const username = usernameElement.current?.value;
+		const password = passwordElement.current?.value;
 
 		if (
 			username == "" ||
@@ -27,12 +27,12 @@ export default function SignIn() {
 			return;
 		}
 
-		let loginRequest: LoginRequest = {
+		const loginRequest: LoginRequest = {
 			username: username,
 			password: password,
 		};
 
-		let response = await fetch("/api/login", {
+		const response = await fetch("/api/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function SignIn() {
 
 		toast.success("Logged In Successfully!");
 
-		let jwtInfo: LoginResponse = await response.json();
+		const jwtInfo: LoginResponse = await response.json();
 		setToken(jwtInfo.token);
 		setCookie("token", jwtInfo.token);
 	}
@@ -73,7 +73,11 @@ export default function SignIn() {
 			</div>
 			<button
 				className="bg-slate-500 w-48 h-8 rounded-md text-gray-200 hover:bg-slate-600 active:bg-slate-700 border-2 border-slate-900"
-				onClick={Login}
+				onClick={async () => {
+					setBlack(true);
+					Login();
+					setBlack(false);
+				}}
 			>
 				Login
 			</button>

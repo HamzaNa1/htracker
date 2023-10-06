@@ -1,0 +1,3 @@
+type GetGamesRequest = {
+	date: string;
+};

@@ -1,13 +1,17 @@
 import { verify } from "jsonwebtoken";
 import { env } from "process";
 
-export default function VerifyToken(request: Request): boolean {
+export function VerifyRequest(request: Request): boolean {
 	let token = extractToken(request);
 
 	if (token == null) {
 		return false;
 	}
 
+	return VerifyToken(token);
+}
+
+export function VerifyToken(token: string): boolean {
 	if (!env.SECRET_KEY) {
 		return false;
 	}

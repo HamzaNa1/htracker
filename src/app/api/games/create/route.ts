@@ -1,9 +1,9 @@
 import { ObjectId } from "mongodb";
 import GetMongo from "@/utility/Mongo";
-import VerifyToken from "@/utility/TokenUtility";
+import { VerifyRequest } from "@/utility/TokenUtility";
 
 export async function GET(request: Request) {
-	if (!VerifyToken(request)) {
+	if (!VerifyRequest(request)) {
 		return new Response(undefined, { status: 401 });
 	}
 
@@ -33,6 +33,7 @@ async function createGame(): Promise<string | null> {
 
 	const game: Game = {
 		Date: gameDate,
+		AddedTimestamp: Date.now(),
 		Agent: "",
 		Map: "",
 		Result: "D",

@@ -1,21 +1,21 @@
 import GetMongo from "@/utility/Mongo";
-import VerifyToken from "@/utility/TokenUtility";
+import { VerifyRequest } from "@/utility/TokenUtility";
 import { Document, WithId } from "mongodb";
 
-export async function GET(request: Request) {
-	if (!VerifyToken(request)) {
+export async function POST(request: Request) {
+	if (!VerifyRequest(request)) {
 		return new Response(undefined, { status: 401 });
 	}
+
+	const getRequest: GetGamesRequest = await request.json();
 
 	const db = await GetMongo();
 	const collection = db.collection("games");
 
-	const cursor = collection.find({}).sort({ _id: -1 }).limit(5);
+	const cursor = collection
+		.find({ "game.Date": getRequest.date })
+		.sort({ "game.AddedTimestamp": -1 });
 	const arr = await cursor.toArray();
-	if (arr.length == 0) {
-		return new Response(undefined, { status: 404 });
-	}
-
 	const games = arr.map((x) => getNote(x));
 
 	const response: GetGamesResponse = {
