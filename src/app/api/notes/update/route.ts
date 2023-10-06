@@ -10,16 +10,18 @@ export async function POST(request: Request) {
 	const updateRequest: UpdateNoteRequest = await request.json();
 
 	const db = await GetMongo();
-	const collection = db.collection("games");
+	const collection = db.collection("notes");
 
 	const result = await collection.updateOne(
 		{
 			_id: updateRequest.Note._id as unknown as ObjectId,
 		},
 		{
-			$set: { game: updateRequest.Note.Game, notes: updateRequest.Note.Text },
+			$set: { Game: updateRequest.Note.Game, Text: updateRequest.Note.Text },
 		}
 	);
+
+	console.log(updateRequest);
 
 	if (result.matchedCount == 0) {
 		return new Response(undefined, { status: 404 });

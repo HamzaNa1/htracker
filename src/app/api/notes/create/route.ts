@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 	}
 
 	const response: CreateResponse = {
-		Game: note,
+		Note: note,
 	};
 
 	return Response.json(response);

@@ -35,7 +35,6 @@ export default function SignIn() {
 		const response = await fetch("/api/login", {
 			method: "POST",
 			headers: {
-				"Content-Type": "application/json",
 				Accept: "application/json",
 			},
 			body: JSON.stringify(loginRequest),

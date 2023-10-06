@@ -35,7 +35,7 @@ export default function Menu() {
 		}
 
 		const createResponse: CreateResponse = await response.json();
-		setNote(createResponse.Game);
+		setNote(createResponse.Note);
 
 		createButtonRef.current.disabled = false;
 
