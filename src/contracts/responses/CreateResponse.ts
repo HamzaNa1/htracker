@@ -1,0 +1,3 @@
+type CreateResponse = {
+	id: string;
+};

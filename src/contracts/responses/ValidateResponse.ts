@@ -1,0 +1,3 @@
+type ValidateResponse = {
+	valid: boolean;
+};

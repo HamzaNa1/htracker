@@ -1,0 +1,3 @@
+type GetGameResponse = {
+	Game: NotesGame;
+};

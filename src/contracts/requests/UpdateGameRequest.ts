@@ -1,0 +1,3 @@
+type UpdateGameRequest = {
+	Game: NotesGame;
+};
