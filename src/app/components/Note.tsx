@@ -108,7 +108,7 @@ export default function Game() {
 		const splitRounds = roundsInput.split("-").map((x) => Number(x));
 
 		note.Game.RoundsWon = splitRounds[0];
-		note.Game.RoundsLost = splitRounds[0];
+		note.Game.RoundsLost = splitRounds[1];
 
 		if (!KDARef.current.checkValidity()) {
 			toast.error("Invalid KDA!");
