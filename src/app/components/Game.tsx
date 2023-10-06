@@ -374,7 +374,7 @@ export default function Game() {
 								<span>
 									RR:{" "}
 									<input
-										pattern="^[0-9]+$"
+										pattern="^(-)*[0-9]+$"
 										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
 										ref={RRRef}
 										defaultValue={game.Game.RR}
