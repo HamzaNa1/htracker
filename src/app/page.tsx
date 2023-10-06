@@ -70,7 +70,7 @@ export default function Home() {
 					<></>
 				)}
 				<main className="bg-slate-800 w-screen h-screen p-10">
-					<Toaster richColors />
+					<Toaster richColors position="bottom-left" />
 					<div className="container h-full mx-auto border-slate-500 border-8 rounded-lg drop-shadow-2xl">
 						{isLoading ? (
 							<div className="h-full flex flex-col gap-7 justify-center items-center">

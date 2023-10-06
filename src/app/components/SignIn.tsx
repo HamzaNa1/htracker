@@ -1,7 +1,7 @@
 "use client";
 
 import { MainContext } from "@/utility/Context";
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "sonner";
 
@@ -52,6 +52,24 @@ export default function SignIn() {
 		setCookie("token", jwtInfo.token, { secure: true });
 	}
 
+	useEffect(() => {
+		async function handleKey(event: KeyboardEvent) {
+			if (event.key != "Enter") {
+				return;
+			}
+
+			setBlack(true);
+			await Login();
+			setBlack(false);
+		}
+
+		document.addEventListener("keydown", handleKey);
+
+		return () => {
+			document.removeEventListener("keydown", handleKey);
+		};
+	}, []);
+
 	return (
 		<div className="h-full flex flex-col gap-7 justify-center items-center">
 			<span className="text-5xl drop-shadow-lg text-gray-300">Sign In</span>
@@ -74,7 +92,7 @@ export default function SignIn() {
 				className="bg-slate-500 w-48 h-8 rounded-md text-gray-200 hover:bg-slate-600 active:bg-slate-700 border-2 border-slate-900"
 				onClick={async () => {
 					setBlack(true);
-					Login();
+					await Login();
 					setBlack(false);
 				}}
 			>

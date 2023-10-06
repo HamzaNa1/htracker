@@ -298,16 +298,6 @@ export default function Game() {
 							</div>
 							<div className="h-full flex-grow flex items-center">
 								<span>
-									K/D Ratio:{" "}
-									<input
-										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center"
-										readOnly={true}
-										value={kdr.toFixed(2)}
-									/>
-								</span>
-							</div>
-							<div className="h-full flex-grow flex items-center">
-								<span>
 									DD:{" "}
 									<input
 										pattern="^(-)*[0-9]+$"
