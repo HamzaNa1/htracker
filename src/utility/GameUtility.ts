@@ -7,6 +7,9 @@ export const agentNames = [
 	"Jett",
 	"Reyna",
 	"Pheonix",
+	"Killjoy",
+	"Yoru",
+	"Breach",
 ];
 
 export const mapNames = [
@@ -16,6 +19,7 @@ export const mapNames = [
 	"Lotus",
 	"Breeze",
 	"Haven",
+	"Bind",
 ];
 
 export const rankNames = [
