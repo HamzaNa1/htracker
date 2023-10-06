@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import GetMongo from "@/utility/Mongo";
 import { VerifyRequest } from "@/utility/TokenUtility";
+import { GetDayAsString } from "@/utility/MiscUtility";
 
 export async function GET(request: Request) {
 	if (!VerifyRequest(request)) {
@@ -24,15 +25,8 @@ async function createGame(): Promise<string | null> {
 	const db = await GetMongo();
 	const collection = db.collection("games");
 
-	const date = new Date();
-	const day = ("0" + date.getDate()).slice(-2);
-	const month = ("0" + (date.getMonth() + 1)).slice(-2);
-	const year = date.getFullYear();
-
-	const gameDate = year + "-" + month + "-" + day;
-
 	const game: Game = {
-		Date: gameDate,
+		Date: GetDayAsString(),
 		AddedTimestamp: Date.now(),
 		Agent: "",
 		Map: "",
@@ -45,6 +39,8 @@ async function createGame(): Promise<string | null> {
 		DD: 0,
 		Headshot: 0,
 		ADR: 0,
+		RR: 0,
+		Rank: "",
 	};
 
 	for (let i = 0; i < 10; i++) {

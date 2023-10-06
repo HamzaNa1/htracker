@@ -18,6 +18,8 @@ type Game = {
 	DD: number;
 	Headshot: number;
 	ADR: number;
+	RR: number;
+	Rank: string;
 };
 
 type GameResult = "W" | "L" | "D";

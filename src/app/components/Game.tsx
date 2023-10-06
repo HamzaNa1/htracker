@@ -1,5 +1,5 @@
 import { MainContext } from "@/utility/Context";
-import { agentNames, mapNames } from "@/utility/GameUtility";
+import { rankNames, agentNames, mapNames } from "@/utility/GameUtility";
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -19,6 +19,8 @@ export default function Game() {
 	const DDRef = useRef<HTMLInputElement>(null);
 	const HSRef = useRef<HTMLInputElement>(null);
 	const ADRRef = useRef<HTMLInputElement>(null);
+	const RRRef = useRef<HTMLInputElement>(null);
+	const RankRef = useRef<HTMLInputElement>(null);
 	const notesRef = useRef<HTMLTextAreaElement>(null);
 
 	async function LoadGame() {
@@ -96,7 +98,9 @@ export default function Game() {
 			!KDARef.current ||
 			!DDRef.current ||
 			!HSRef.current ||
-			!ADRRef.current
+			!ADRRef.current ||
+			!RRRef.current ||
+			!RankRef.current
 		) {
 			return;
 		}
@@ -170,6 +174,20 @@ export default function Game() {
 
 		game.Game.ADR = Number(ADRRef.current.value);
 
+		if (!RRRef.current.checkValidity()) {
+			toast.error("Invalid RR!");
+			return;
+		}
+
+		game.Game.RR = Number(RRRef.current.value);
+
+		if (!RankRef.current.checkValidity) {
+			toast.error("Invalid Rank!");
+			return;
+		}
+
+		game.Game.Rank = RankRef.current.value;
+
 		const updateRequest: UpdateGameRequest = {
 			Game: game,
 		};
@@ -207,148 +225,173 @@ export default function Game() {
 	if (game) {
 		const agentPattern = "^(" + agentNames.join("|") + ")$";
 		const mapPattern = "^(" + mapNames.join("|") + ")$";
+		const rankPattern = "^(" + rankNames.join("|") + ")$";
 
 		return (
 			<>
 				<div className="h-full flex flex-col">
-					<div className="w-full h-24 p-3 flex flex-row gap-4 bg-slate-500 rounded-md text-gray-200 border-2 border-slate-900">
-						<div className="h-full flex items-center">
-							<span>
-								Date:{" "}
-								<input
-									type="date"
-									className="bg-slate-600 outline-none rounded-md px-1 w-30 text-center"
-									ref={dateRef}
-									defaultValue={game.Game.Date}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								Agent:{" "}
-								<input
-									pattern={agentPattern}
-									className="bg-slate-600 outline-none rounded-md px-1 w-20 text-center invalid:border-red-600 invalid:border-2"
-									ref={agentRef}
-									defaultValue={game.Game.Agent}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								Map:{" "}
-								<input
-									pattern={mapPattern}
-									className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
-									ref={mapRef}
-									defaultValue={game.Game.Map}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								Result:{" "}
-								<input
-									pattern="^(D|W|L)$"
-									className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
-									ref={resultRef}
-									defaultValue={game.Game.Result}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								Rounds:{" "}
-								<input
-									pattern="^[0-9]+-[0-9]+$"
-									className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
-									ref={roundsRef}
-									defaultValue={
-										(game.Game.RoundsWon < 10
-											? "0" + game.Game.RoundsWon
-											: game.Game.RoundsWon) +
-										"-" +
-										(game.Game.RoundsLost < 10
-											? "0" + game.Game.RoundsLost
-											: game.Game.RoundsLost)
-									}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								K/D/A:{" "}
-								<input
-									pattern="^[0-9]+/[0-9]+/[0-9]+$"
-									className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
-									ref={KDARef}
-									defaultValue={
-										game.Game.Kills +
-										"/" +
-										game.Game.Deaths +
-										"/" +
-										game.Game.Assists
-									}
-									onChange={(e) => {
-										if (!e.target.checkValidity()) {
-											setKDR(0);
-											return;
+					<div className="w-full h-24 p-3 bg-slate-500 rounded-md text-gray-200 border-2 border-slate-900">
+						<div className="w-full h-full flex flex-row gap-1 items-center">
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									Date:{" "}
+									<input
+										type="date"
+										className="bg-slate-600 outline-none rounded-md px-1 w-30 text-center"
+										ref={dateRef}
+										defaultValue={game.Game.Date}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									Agent:{" "}
+									<input
+										pattern={agentPattern}
+										className="bg-slate-600 outline-none rounded-md px-1 w-20 text-center invalid:border-red-600 invalid:border-2"
+										ref={agentRef}
+										defaultValue={game.Game.Agent}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									Map:{" "}
+									<input
+										pattern={mapPattern}
+										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
+										ref={mapRef}
+										defaultValue={game.Game.Map}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									Result:{" "}
+									<input
+										pattern="^(D|W|L)$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
+										ref={resultRef}
+										defaultValue={game.Game.Result}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									Rounds:{" "}
+									<input
+										pattern="^[0-9]+-[0-9]+$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
+										ref={roundsRef}
+										defaultValue={
+											(game.Game.RoundsWon < 10
+												? "0" + game.Game.RoundsWon
+												: game.Game.RoundsWon) +
+											"-" +
+											(game.Game.RoundsLost < 10
+												? "0" + game.Game.RoundsLost
+												: game.Game.RoundsLost)
 										}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									K/D/A:{" "}
+									<input
+										pattern="^[0-9]+/[0-9]+/[0-9]+$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-16 text-center invalid:border-red-600 invalid:border-2"
+										ref={KDARef}
+										defaultValue={
+											game.Game.Kills +
+											"/" +
+											game.Game.Deaths +
+											"/" +
+											game.Game.Assists
+										}
+										onChange={(e) => {
+											if (!e.target.checkValidity()) {
+												setKDR(0);
+												return;
+											}
 
-										const splitKDA = e.target.value
-											.split("/")
-											.map((x) => Number(x));
+											const splitKDA = e.target.value
+												.split("/")
+												.map((x) => Number(x));
 
-										const kills = splitKDA[0];
-										const deaths = splitKDA[1];
+											const kills = splitKDA[0];
+											const deaths = splitKDA[1];
 
-										setKDR(deaths == 0 ? 0 : kills / deaths);
-									}}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								K/D Ratio:{" "}
-								<input
-									className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center"
-									readOnly={true}
-									value={kdr.toFixed(2)}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								DD:{" "}
-								<input
-									pattern="^[0-9]+$"
-									className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
-									ref={DDRef}
-									defaultValue={game.Game.DD}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								HS:{" "}
-								<input
-									pattern="^[0-9]+$"
-									className="bg-slate-600 outline-none rounded-md px-1 w-8 text-center invalid:border-red-600 invalid:border-2"
-									ref={HSRef}
-									defaultValue={game.Game.Headshot}
-								/>
-							</span>
-						</div>
-						<div className="h-full flex items-center">
-							<span>
-								ADR:{" "}
-								<input
-									pattern="^[0-9]+$"
-									className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
-									ref={ADRRef}
-									defaultValue={game.Game.ADR}
-								/>
-							</span>
+											setKDR(deaths == 0 ? 0 : kills / deaths);
+										}}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									K/D Ratio:{" "}
+									<input
+										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center"
+										readOnly={true}
+										value={kdr.toFixed(2)}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									DD:{" "}
+									<input
+										pattern="^[0-9]+$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
+										ref={DDRef}
+										defaultValue={game.Game.DD}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									HS:{" "}
+									<input
+										pattern="^[0-9]+$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-8 text-center invalid:border-red-600 invalid:border-2"
+										ref={HSRef}
+										defaultValue={game.Game.Headshot}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									ADR:{" "}
+									<input
+										pattern="^[0-9]+$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
+										ref={ADRRef}
+										defaultValue={game.Game.ADR}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									RR:{" "}
+									<input
+										pattern="^[0-9]+$"
+										className="bg-slate-600 outline-none rounded-md px-1 w-12 text-center invalid:border-red-600 invalid:border-2"
+										ref={RRRef}
+										defaultValue={game.Game.RR}
+									/>
+								</span>
+							</div>
+							<div className="h-full flex-grow flex items-center">
+								<span>
+									Rank:{" "}
+									<input
+										pattern={rankPattern}
+										className="bg-slate-600 outline-none rounded-md px-1 w-24 text-center invalid:border-red-600 invalid:border-2"
+										ref={RankRef}
+										defaultValue={game.Game.Rank}
+									/>
+								</span>
+							</div>
 						</div>
 					</div>
 					<div className="w-full h-3 bg-slate-500"></div>

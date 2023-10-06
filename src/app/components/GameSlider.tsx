@@ -136,6 +136,27 @@ export default function GameBanner({ games }: { games: NotesGame[] }) {
 							/>
 						</span>
 					</div>
+					<div className="h-full flex-grow flex items-center">
+						<span>
+							RR:{" "}
+							<input
+								pattern="^[0-9]+$"
+								className="bg-slate-400 outline-none rounded-md px-1 w-12 text-center"
+								readOnly={true}
+								value={x.Game.RR}
+							/>
+						</span>
+					</div>
+					<div className="h-full flex-grow flex items-center">
+						<span>
+							Rank:{" "}
+							<input
+								className="bg-slate-400 outline-none rounded-md px-1 w-24 text-center"
+								readOnly={true}
+								value={x.Game.Rank}
+							/>
+						</span>
+					</div>
 				</button>
 			))}
 		</div>

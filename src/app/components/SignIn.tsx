@@ -50,7 +50,7 @@ export default function SignIn() {
 
 		const jwtInfo: LoginResponse = await response.json();
 		setToken(jwtInfo.token);
-		setCookie("token", jwtInfo.token);
+		setCookie("token", jwtInfo.token, { secure: true });
 	}
 
 	return (
