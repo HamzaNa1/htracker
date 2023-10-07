@@ -88,7 +88,11 @@ export default function NoteSlider({ games }: { games: Note[] }) {
 						<input
 							className="bg-slate-400 outline-none rounded-md px-1 w-12 text-center cursor-default"
 							readOnly={true}
-							value={x.Game.Deaths == 0 ? 0 : x.Game.Kills / x.Game.Deaths}
+							value={
+								x.Game.Deaths == 0
+									? 0
+									: (x.Game.Kills / x.Game.Deaths).toFixed(2)
+							}
 						/>
 					</div>
 					<div className="h-full flex-grow flex flex-col gap-2 justify-center items-center">
