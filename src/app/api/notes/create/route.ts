@@ -55,7 +55,7 @@ async function createNote(): Promise<Note | null> {
 			await collection.insertOne({
 				_id: id as unknown as ObjectId,
 				Game: game,
-				Notes: "",
+				Text: "",
 			});
 
 			return notesGame;
