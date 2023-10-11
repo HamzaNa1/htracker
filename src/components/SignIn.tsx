@@ -1,17 +1,18 @@
 "use client";
 
-import { MainContext } from "@/utility/Context";
-import { useContext, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import { toast } from "sonner";
 
 export default function SignIn() {
+	const router = useRouter();
 	const [, setCookie] = useCookies(["token"]);
-
-	const { setToken, setBlack } = useContext(MainContext);
+	const [buttonDisabled, setButtonDisabled] = useState(false);
 
 	const usernameElement = useRef<HTMLInputElement>(null);
 	const passwordElement = useRef<HTMLInputElement>(null);
+	const buttonElement = useRef<HTMLButtonElement>(null);
 
 	async function Login() {
 		const username = usernameElement.current?.value;
@@ -48,8 +49,8 @@ export default function SignIn() {
 		toast.success("Logged In Successfully!");
 
 		const jwtInfo: LoginResponse = await response.json();
-		setToken(jwtInfo.token);
 		setCookie("token", jwtInfo.token, { secure: true });
+		router.replace("/");
 	}
 
 	useEffect(() => {
@@ -58,9 +59,9 @@ export default function SignIn() {
 				return;
 			}
 
-			setBlack(true);
+			setButtonDisabled(true);
 			await Login();
-			setBlack(false);
+			setButtonDisabled(false);
 		}
 
 		document.addEventListener("keydown", handleKey);
@@ -70,9 +71,16 @@ export default function SignIn() {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (!buttonElement.current) {
+			return;
+		}
+
+		buttonElement.current.disabled = buttonDisabled;
+	}, [buttonDisabled]);
+
 	return (
-		<div className="h-full flex flex-col gap-7 justify-center items-center">
-			<span className="text-5xl drop-shadow-lg text-gray-300">Sign In</span>
+		<>
 			<div className="flex flex-col">
 				<span className="text-sm text-gray-300 px-1">Username</span>
 				<input
@@ -89,15 +97,18 @@ export default function SignIn() {
 				/>
 			</div>
 			<button
-				className="bg-slate-500 w-48 h-8 rounded-md text-gray-200 hover:bg-slate-600 active:bg-slate-700 border-2 border-slate-900"
-				onClick={async () => {
-					setBlack(true);
+				className={
+					"bg-slate-500 w-48 h-8 rounded-md text-gray-200 hover:bg-slate-600 active:bg-slate-700 border-2 border-slate-900 disabled:bg-slate-700"
+				}
+				ref={buttonElement}
+				onClick={async (e) => {
+					setButtonDisabled(true);
 					await Login();
-					setBlack(false);
+					setButtonDisabled(false);
 				}}
 			>
 				Login
 			</button>
-		</div>
+		</>
 	);
 }

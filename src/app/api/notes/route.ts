@@ -12,9 +12,21 @@ export async function POST(request: Request) {
 	const db = await GetMongo();
 	const collection = db.collection("notes");
 
+	const filter: any = {};
+
+	if (getRequest.date != "") {
+		filter["Game.Date"] = getRequest.date;
+	}
+
+	if (getRequest.hasNotes) {
+		filter["Text"] = { $ne: "" };
+	}
+
+	console.log(filter);
 	const cursor = collection
-		.find({ "Game.Date": getRequest.date })
-		.sort({ "Game.AddedTimestamp": -1 });
+		.find(filter)
+		.sort({ "Game.Date": -1, "Game.AddedTimestamp": -1 })
+		.limit(getRequest.amount);
 	const arr = await cursor.toArray();
 	const games = arr.map((x) => getNote(x));
 

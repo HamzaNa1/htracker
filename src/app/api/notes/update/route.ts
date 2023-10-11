@@ -21,8 +21,6 @@ export async function POST(request: Request) {
 		}
 	);
 
-	console.log(updateRequest);
-
 	if (result.matchedCount == 0) {
 		return new Response(undefined, { status: 404 });
 	}

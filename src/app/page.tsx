@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SignIn from "./components/SignIn";
-import { Toaster, toast } from "sonner";
-import Menu from "./components/Menu";
-import Game from "./components/Note";
+import { toast } from "sonner";
+import Menu from "@/components/Menu";
+import Game from "@/components/Note";
 import { useCookies } from "react-cookie";
 import { MainContext } from "@/utility/Context";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-	const [cookies] = useCookies(["token"]);
-	const [isLoading, setLoading] = useState(true);
-	const [token, setToken] = useState("");
+	const router = useRouter();
+
+	const [cookies, , removeCookie] = useCookies(["token"]);
+	const [token, setToken] = useState<string>(cookies.token);
 	const [note, setNote] = useState<Note | null>(null);
 	const [black, setBlack] = useState(false);
 
@@ -38,19 +39,29 @@ export default function Home() {
 
 		if (validateResponse.valid) {
 			setToken(token);
-		}
-
-		setLoading(false);
-	}
-
-	useEffect(() => {
-		if (!cookies.token) {
-			setLoading(false);
 			return;
 		}
 
-		ValidateToken(cookies.token);
+		removeCookie("token", { secure: true });
+		router.replace("/login");
+	}
+
+	useEffect(() => {
+		if (cookies.token) {
+			return;
+		}
+
+		router.replace("/login");
 	}, []);
+
+	useEffect(() => {
+		if (token == "") {
+			router.replace("/login");
+			return;
+		}
+
+		ValidateToken(token);
+	}, [token]);
 
 	return (
 		<MainContext.Provider
@@ -64,29 +75,10 @@ export default function Home() {
 			}}
 		>
 			<>
-				{black ? (
+				{black && (
 					<div className="absolute top-0 left-0 right-0 bottom-0 z-10 overflow-hidden pointer-events-[all] w-full h-full bg-black opacity-30"></div>
-				) : (
-					<></>
 				)}
-				<main className="bg-slate-800 w-screen h-screen p-10">
-					<Toaster richColors position="bottom-left" />
-					<div className="container h-full mx-auto border-slate-500 border-8 rounded-lg drop-shadow-2xl">
-						{isLoading ? (
-							<div className="h-full flex flex-col gap-7 justify-center items-center">
-								<span className="text-5xl drop-shadow-lg text-gray-300">
-									Loading
-								</span>
-							</div>
-						) : token == "" ? (
-							<SignIn />
-						) : note == null ? (
-							<Menu />
-						) : (
-							<Game />
-						)}
-					</div>
-				</main>
+				{note == null ? <Menu /> : <Game />}
 			</>
 		</MainContext.Provider>
 	);
